@@ -1,0 +1,201 @@
+1.import math
+from graphics import GraphWin, Polygon, Point
+
+def draw_polygon():
+    n = int(input("Enter the number of sides: "))
+    radius = float(input("Enter the radius of the polygon: "))
+    
+    win_size = 500
+    win = GraphWin("Regular Polygon", win_size, win_size)
+    center_x = win_size / 2
+    center_y = win_size / 2
+    
+    angle_step = 360 / n
+    vertices = []
+    
+    for i in range(n):
+        deg = i * angle_step
+        rad = math.radians(deg)
+  
+        x = center_x + radius * math.cos(rad)
+        y = center_y - radius * math.sin(rad)
+        
+        vertices.append(Point(x, y))
+        
+    poly = Polygon(vertices)
+    poly.draw(win)
+    
+    win.getMouse()
+    win.close()
+
+if __name__ == "__main__":
+    draw_polygon()
+2. import math
+from graphics import GraphWin, Polygon, Point
+
+def draw_flat_polygon():
+    n = int(input("Enter the number of sides: "))
+    radius = float(input("Enter the radius of the polygon: "))
+    
+    win_size = 500
+    win = GraphWin("Rotated Regular Polygon", win_size, win_size)
+    center_x = win_size / 2
+    center_y = win_size / 2 
+    angle_step = 360 / n
+    offset = 90 + (180 / n)
+    vertices = []
+    
+    for i in range(n):
+        deg = (i * angle_step) + offset
+        rad = math.radians(deg)
+        
+        x = center_x + radius * math.cos(rad)
+        y = center_y - radius * math.sin(rad)
+        
+        vertices.append(Point(x, y))
+        
+    poly = Polygon(vertices)
+    poly.draw(win)
+    
+    win.getMouse()
+    win.close()
+
+if __name__ == "__main__":
+    draw_flat_polygon()
+3. from graphics import GraphWin, Point, Line, Text
+
+def graph_logistic_points():
+    # Prompt for user inputs
+    x_val = float(input("Enter initial value (0 to 1): "))
+    r = float(input("Enter growth rate r (e.g., 3.5): "))
+    
+    win = GraphWin("Logistic Function - Points", 600, 400)
+    win.setCoords(-5, -0.1, 105, 1.1)
+    
+    Line(Point(0, 0), Point(100, 0)).draw(win) # X axis
+    Line(Point(0, 0), Point(0, 1)).draw(win)   # Y axis
+    Text(Point(50, -0.05), "Time (Iterations)").draw(win)
+    Text(Point(-3, 0.5), "Y").draw(win)
+    
+    Point(0, x_val).draw(win)
+    
+    for t in range(1, 101):
+        x_val = r * x_val * (1 - x_val)
+        pt = Point(t, x_val)
+        pt.draw(win)
+        
+    win.getMouse()
+    win.close()
+
+if __name__ == "__main__":
+    graph_logistic_points()
+
+4. from graphics import GraphWin, Point, Line, Text
+
+def graph_logistic_lines():
+    x_val = float(input("Enter initial value (0 to 1): "))
+    r = float(input("Enter growth rate r (e.g., 3.5): "))
+    
+    win = GraphWin("Logistic Function - Lines", 600, 400)
+    win.setCoords(-5, -0.1, 105, 1.1)
+    
+    Line(Point(0, 0), Point(100, 0)).draw(win)
+    Line(Point(0, 0), Point(0, 1)).draw(win)
+    Text(Point(50, -0.05), "Time (Iterations)").draw(win)
+    
+    prev_pt = Point(0, x_val)
+    
+    for t in range(1, 101):
+        x_val = r * x_val * (1 - x_val)
+        curr_pt = Point(t, x_val)
+        
+        line = Line(prev_pt, curr_pt)
+        line.draw(win) 
+
+        prev_pt = curr_pt
+        
+    win.getMouse()
+    win.close()
+
+if __name__ == "__main__":
+    graph_logistic_lines()
+5. from graphics import GraphWin, Point, Line, Text, Entry, Rectangle
+
+def run_interactive_grapher():
+    win = GraphWin("Interactive Logistic Grapher", 700, 500)
+    win.setBackground("white")
+    
+    win.setCoords(-15, -0.2, 115, 1.2)
+    
+    Text(Point(10, 1.1), "Initial X:").draw(win)
+    input_x = Entry(Point(25, 1.1), 5)
+    input_x.setText("0.2")
+    input_x.draw(win)
+    
+    Text(Point(45, 1.1), "Growth r:").draw(win)
+    input_r = Entry(Point(60, 1.1), 5)
+    input_r.setText("3.6")
+    input_r.draw(win)
+    
+    button = Rectangle(Point(80, 1.05), Point(100, 1.15))
+    button.setFill("lightgray")
+    button.draw(win)
+    button_text = Text(Point(90, 1.1), "Graph")
+    button_text.draw(win)
+  
+    Line(Point(0, 0), Point(100, 0)).draw(win)
+    Line(Point(0, 0), Point(0, 1)).draw(win)
+    Text(Point(-5, 0.5), "X value").draw(win)
+    Text(Point(50, -0.08), "Time").draw(win)
+  
+    graph_elements = []
+
+    while True:
+        click_pt = win.getMouse()
+        cx, cy = click_pt.getX(), click_pt.getY()
+        
+      
+        if 80 <= cx <= 100 and 1.05 <= cy <= 1.15:
+            if button_text.getText() == "Exit":
+                break # Terminate application loop
+                
+           
+            for element in graph_elements:
+                element.undraw()
+            graph_elements.clear()
+            
+           
+            try:
+                x_val = float(input_x.getText())
+                r = float(input_r.getText())
+            except ValueError:
+                continue # Ignore clicks if input is corrupted/malformed text
+            
+        
+            prev_pt = Point(0, x_val)
+            for t in range(1, 101):
+                x_val = r * x_val * (1 - x_val)
+                curr_pt = Point(t, x_val)
+                
+                segment = Line(prev_pt, curr_pt)
+                segment.setOutline("blue")
+                segment.draw(win)
+                graph_elements.append(segment)
+                
+               
+                dot = Point(t, x_val)
+                dot.setOutline("red")
+                dot.draw(win)
+                graph_elements.append(dot)
+                
+                prev_pt = curr_pt
+                
+           
+            button_text.setText("Exit")
+            button.setFill("salmon")
+
+    win.close()
+
+if __name__ == "__main__":
+    run_interactive_grapher()
+
